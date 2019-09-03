@@ -33,7 +33,10 @@ def getClaims():
 def handleMassPings(comment, recentuses):
     cmdregex = re.search(r"^Ping! [\w ]*", comment.body) # Regex to check for a command
     if cmdregex != None:
-        comment.refresh()
+        try:
+            comment.refresh()
+        except praw.exceptions.ClientException:
+            return
         commentreplies = comment.replies
         commentreplies.replace_more()
         for com in commentreplies.list(): # Ignore any comments that we've already responded to
@@ -45,7 +48,7 @@ def handleMassPings(comment, recentuses):
             print("Mass ping attempted by non-claimant:", comment.author.name)
             return
         if len(list(filter(lambda x: x.player == comment.author.name, masspinguses))) != 0: # Stop players pinging a lot
-            comment.reply("You'ved use a mass ping too recently. Please leave 3 minutes inbetween pings.")
+            comment.reply("You've use a mass ping too recently. Please leave 3 minutes inbetween pings.")
             return
         commentstomake = []
         grouptoping = cmdregex.group().replace("Ping! ", "") # Extract the argument of the command
@@ -71,7 +74,7 @@ def handleMassPings(comment, recentuses):
         while counter < len(validpings): # Iterate through the claims we need to ping
             commentbody = "Pinging: \n"
             for ping in validpings[counter:counter+3]:
-                commentbody += "\n" + ping + "asdfafafddfafd\n" # Do 3 pings at a time per reddit limitations
+                commentbody += "\n" + ping + "\n" # Do 3 pings at a time per reddit limitations
             counter += 3
             commentstomake.append(commentbody)
         lastcomment = comment
@@ -83,12 +86,12 @@ def handleMassPings(comment, recentuses):
             for npc in npcs:
                 npccomment += npc + ", "
             lastcomment.reply(npccomment[0:-2])
-        masspinguses.append(PingUse(comment.author.name, datetime.datetime.now().timestamp))
+        masspinguses.append(PingUse(comment.author.name, datetime.datetime.now().timestamp()))
 
 masspinguses = []
 
 for comment in geosim.stream.comments():
     for use in masspinguses:
-        if datetime.datetime.now().timestamp - use.time > 180:
+        if datetime.datetime.now().timestamp() - use.time > 180:
             masspinguses.remove(use)
     handleMassPings(comment, masspinguses)

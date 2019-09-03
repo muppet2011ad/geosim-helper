@@ -15,13 +15,13 @@ def getOrgs():
 	claimsingroup = []
 	groupname = lines[0][2:-3]
 	for line in lines[1:-1]:
-		if line == "":
+		if line == "\n":
 			continue
 		if line[0] == "*":
 			orgs.append(Org(groupname, claimsingroup))
 			claimsingroup = []
 			groupname = line[2:-3]
-		else:
-			claimsingroup.append(line)
+		elif line[0:-1] != "":
+			claimsingroup.append(line[0:-1])
 	orgs.append(Org(groupname, claimsingroup))
 	return orgs
