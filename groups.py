@@ -17,7 +17,6 @@ def getOrgs():
 	for line in lines[1:-1]:
 		if line == "":
 			continue
-		print(line)
 		if line[0] == "*":
 			orgs.append(Org(groupname, claimsingroup))
 			claimsingroup = []
