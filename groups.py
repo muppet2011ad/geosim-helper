@@ -19,3 +19,4 @@ def getOrgs():
 			else:
 				claimsingroup.append(line)
 		orgs.append(Org(groupname, claimsingroup))
+	return orgs
