@@ -30,6 +30,9 @@ def handleMassPings(comment):
     cmdregex = re.search(r"^Ping! [\w]*", comment.body)
     if cmdregex != None:
         claims, countries = getClaims()
+        if len(list(filter(lambda x: x.player == "/u/" + comment.author.name, claims))) == 0:
+            print("Mass ping attempted by non-claimant:", comment.author.name)
+            return
         commentstomake = []
         grouptoping = cmdregex.group().replace("Ping! ", "")
         if grouptoping != "UNGA":
@@ -54,13 +57,13 @@ def handleMassPings(comment):
         while counter < len(validpings):
             commentbody = "Pinging: \n"
             for ping in validpings[counter:counter+3]:
-                commentbody += "\n" + ping + "\n"
+                commentbody += "\n" + ping + "dfgndfgjkn\n"
             counter += 3
             commentstomake.append(commentbody)
-        print(commentstomake)
-        
-
-handleMassPings(Comment("Ping! UNGA"))
+        lastcomment = comment
+        for reply in commentstomake:
+            newcom = lastcomment.reply(reply)
+            lastcomment = newcom
 
 for comment in geosim.stream.comments(skip_existing=True):
-    pass
+    handleMassPings(comment)
