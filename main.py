@@ -26,51 +26,51 @@ def getClaims():
     return claimslist, countries
 
 def handleMassPings(comment):
-    comment.refresh()
-    commentreplies = comment.replies
-    commentreplies.replace_more()
-    for com in commentreplies.list():
-        if com.author.name == "geosim-helper":
-            return
-    cmdregex = re.search(r"^Ping! [\w ]*", comment.body)
+    cmdregex = re.search(r"^Ping! [\w ]*", comment.body) # Regex to check for a command
     if cmdregex != None:
+        comment.refresh()
+        commentreplies = comment.replies
+        commentreplies.replace_more()
+        for com in commentreplies.list(): # Ignore any comments that we've already responded to
+            if com.author.name == "geosim-helper":
+                return
         organisations = groups.getOrgs()
-        claims, countries = getClaims()
-        if len(list(filter(lambda x: x.player == "/u/" + comment.author.name, claims))) == 0:
+        claims, countries = getClaims() # Fetch info from geosim wiki
+        if len(list(filter(lambda x: x.player.lower() == "/u/" + comment.author.name.lower(), claims))) == 0: # Catch players who aren't on the list
             print("Mass ping attempted by non-claimant:", comment.author.name)
             return
         commentstomake = []
-        grouptoping = cmdregex.group().replace("Ping! ", "")
-        if grouptoping != "UNGA":
+        grouptoping = cmdregex.group().replace("Ping! ", "") # Extract the argument of the command
+        if grouptoping != "UNGA": # Everything other than UNGA
             try:
-                organisation = list(filter(lambda x: x.name == grouptoping, organisations))[0]
+                organisation = list(filter(lambda x: x.name == grouptoping, organisations))[0] # Attempt to get the org
             except:
-                comment.reply("That isn't a valid group to ping.")
+                comment.reply("That isn't a valid group to ping.") # Reply to the user if they try and get an invalid org
                 return
-        else:
-            nonga = list(filter(lambda x: x.name == "NonGA", organisations))[0]
-            ungacountries = list(filter(lambda x: x not in nonga.claims, countries))
-            organisation = groups.Org("UNGA",ungacountries)
+        else: # If it's a UNGA ping
+            nonga = list(filter(lambda x: x.name == "NonGA", organisations))[0] # Get the non-ga claims
+            ungacountries = list(filter(lambda x: x not in nonga.claims, countries)) # Get the list of GA claims
+            organisation = groups.Org("UNGA",ungacountries) # Create an organisation for the rest of the code to use (this is a bit of a hack)
         validpings = []
         npcs = []
-        for country in organisation.claims:
-            if country in countries:
-                validpings.append(country + " - " + list(filter(lambda x: x.country == country, claims))[0].player)
+        for country in organisation.claims: # For every country in the org
+            if country in countries: # If they're claimed
+                validpings.append(country + " - " + list(filter(lambda x: x.country == country, claims))[0].player) # Construct a ping
             else:
-                npcs.append(country)
+                npcs.append(country) # Otherwise mark them for npc
         counter = 0
         commentbody = ""
-        while counter < len(validpings):
+        while counter < len(validpings): # Iterate through the claims we need to ping
             commentbody = "Pinging: \n"
             for ping in validpings[counter:counter+3]:
-                commentbody += "\n" + ping + "\n"
+                commentbody += "\n" + ping + "\n" # Do 3 pings at a time per reddit limitations
             counter += 3
             commentstomake.append(commentbody)
         lastcomment = comment
-        for reply in commentstomake:
+        for reply in commentstomake: # Create a comment chain with all of the replies
             newcom = lastcomment.reply(reply)
             lastcomment = newcom
-        if len(npcs) != 0:
+        if len(npcs) != 0: # Add NPCs at the end if required
             npccomment = "NPCs required for: "
             for npc in npcs:
                 npccomment += npc + ", "
