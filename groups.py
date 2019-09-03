@@ -8,7 +8,6 @@ def getOrgs():
 	orgs = []
 	with open("groups", "r") as f:
 		lines = f.read().split("\n")
-		print(lines)
 		claimsingroup = []
 		groupname = lines[0][1:]
 		for line in lines [1:-1]:
