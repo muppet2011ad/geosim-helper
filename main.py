@@ -64,6 +64,11 @@ def handleMassPings(comment):
         for reply in commentstomake:
             newcom = lastcomment.reply(reply)
             lastcomment = newcom
+        if len(npcs) != 0:
+            npccomment = "NPCs required for: "
+            for npc in npcs:
+                npccomment += npc + ", "
+            lastcomment.reply(npccomment[0:-2])
 
 for comment in geosim.stream.comments(skip_existing=True):
     handleMassPings(comment)
