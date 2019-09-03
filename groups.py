@@ -25,6 +25,4 @@ def getOrgs():
 		else:
 			claimsingroup.append(line)
 	orgs.append(Org(groupname, claimsingroup))
-	for org in orgs:
-		print(org.name)
 	return orgs
