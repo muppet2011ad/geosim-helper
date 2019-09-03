@@ -26,6 +26,7 @@ def getClaims():
     return claimslist, countries
 
 def handleMassPings(comment):
+    comment.refresh()
     commentreplies = comment.replies
     commentreplies.replace_more()
     for com in commentreplies.list():
