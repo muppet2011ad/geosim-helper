@@ -62,7 +62,7 @@ def handleMassPings(comment):
         while counter < len(validpings):
             commentbody = "Pinging: \n"
             for ping in validpings[counter:counter+3]:
-                commentbody += "\n" + ping + "dfgndfgjkn\n"
+                commentbody += "\n" + ping + "\n"
             counter += 3
             commentstomake.append(commentbody)
         lastcomment = comment
