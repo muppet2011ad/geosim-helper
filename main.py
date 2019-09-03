@@ -34,6 +34,7 @@ def handleMassPings(comment):
             return
     cmdregex = re.search(r"^Ping! [\w ]*", comment.body)
     if cmdregex != None:
+        organisations = groups.getOrgs()
         claims, countries = getClaims()
         if len(list(filter(lambda x: x.player == "/u/" + comment.author.name, claims))) == 0:
             print("Mass ping attempted by non-claimant:", comment.author.name)
