@@ -1,5 +1,4 @@
 import praw, re, datetime, groups
-from testcomment import Comment
 from claim import Claim
 
 reddit = praw.Reddit("bot1") # Loads the config from praw.ini
@@ -27,7 +26,7 @@ def getClaims():
     return claimslist, countries
 
 def handleMassPings(comment):
-    cmdregex = re.search(r"^Ping! [\w]*", comment.body)
+    cmdregex = re.search(r"^Ping! [\w ]*", comment.body)
     if cmdregex != None:
         claims, countries = getClaims()
         if len(list(filter(lambda x: x.player == "/u/" + comment.author.name, claims))) == 0:
