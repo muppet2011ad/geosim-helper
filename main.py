@@ -26,6 +26,11 @@ def getClaims():
     return claimslist, countries
 
 def handleMassPings(comment):
+    commentreplies = comment.replies
+    commentreplies.replace_more()
+    for com in commentreplies.list():
+        if com.author.name == "geosim-helper":
+            return
     cmdregex = re.search(r"^Ping! [\w ]*", comment.body)
     if cmdregex != None:
         claims, countries = getClaims()
@@ -69,5 +74,5 @@ def handleMassPings(comment):
                 npccomment += npc + ", "
             lastcomment.reply(npccomment[0:-2])
 
-for comment in geosim.stream.comments(skip_existing=True):
+for comment in geosim.stream.comments():
     handleMassPings(comment)
