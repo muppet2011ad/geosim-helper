@@ -19,10 +19,10 @@ def getClaims():
     countries = []
 
     for line in playermasterlist.split("\n"): # For every line of text in the player master list
-        if line[0] != "[" or "/u/" not in line: # If it's not a line about a claim
+        if line[0] != "[" or "/u/" not in line.split("|")[1]: # If it's not a line about a claim
             continue # Ignore it
         country = re.search(r"\[(.*?)\]",line).group().replace("[","").replace("]","") # Regex to identify the country in square brackets
-        player = re.search(r"\/u\/[^|\* ]*",line).group() # Regex to extract the player from the line
+        player = re.search(r"\/u\/[^|\* ]*",line.split("|")[1]).group() # Regex to extract the player from the line
         claimslist.append(Claim(country,player)) # Creates a new claim object
         countries.append(country)
         claimslist = sorted(claimslist, key = lambda claim: claim.country)
