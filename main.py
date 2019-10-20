@@ -30,6 +30,14 @@ def getClaims():
     
     return claimslist, countries
 
+def getMods():
+    moderators = geosim.moderator()
+    realmods = []
+    for moderator in moderators:
+        if "all" in moderator.mod_permissions:
+            realmods.append(moderator)
+    return realmods
+
 def handleMassPings(comment, recentuses):
     cmdregex = re.search(r"^Ping! [\w ]*", comment.body) # Regex to check for a command
     if cmdregex != None:
@@ -90,8 +98,41 @@ def handleMassPings(comment, recentuses):
 
 masspinguses = []
 
+def handleModPings(comment, recentuses):
+    cmdregex = re.search(r"^Mods!$", comment.body)
+    if cmdregex != None:
+        try:
+            comment.refresh()
+        except praw.exceptions.ClientException:
+            return
+        commentreplies = comment.replies
+        commentreplies.replace_more()
+        for com in commentreplies.list(): # Ignore any comments that we've already responded to
+            if com.author.name == "geosim-helper":
+                return
+        if len(list(filter(lambda x: x.player == comment.author.name, masspinguses))) != 0: # Stop players pinging a lot
+            comment.reply("You've use a mass ping too recently. Please leave 3 minutes inbetween pings.")
+            return
+        pings = []
+        for moderator in getMods():
+            pings.append("/u/" + moderator.name)
+        counter = 0
+        commentstomake = []
+        while counter < len(pings): # Iterate through the claims we need to ping
+            commentbody = "Pinging: \n"
+            for ping in pings[counter:counter+3]:
+                commentbody += "\n" + ping + "\n" # Do 3 pings at a time per reddit limitations
+            counter += 3
+            commentstomake.append(commentbody)
+        lastcomment = comment
+        for reply in commentstomake: # Create a comment chain with all of the replies
+            newcom = lastcomment.reply(reply)
+            lastcomment = newcom
+        masspinguses.append(PingUse(comment.author.name, datetime.datetime.now().timestamp()))
+
 for comment in geosim.stream.comments():
     for use in masspinguses:
         if datetime.datetime.now().timestamp() - use.time > 180:
             masspinguses.remove(use)
     handleMassPings(comment, masspinguses)
+    handleModPings(comment, masspinguses)
