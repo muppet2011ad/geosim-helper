@@ -62,7 +62,7 @@ def handleMassPings(comment, recentuses):
         grouptoping = cmdregex.group().replace("Ping! ", "") # Extract the argument of the command
         if grouptoping != "UNGA": # Everything other than UNGA
             try:
-                organisation = list(filter(lambda x: x.name == grouptoping, organisations))[0] # Attempt to get the org
+                organisation = list(filter(lambda x: x.name == grouptoping.lower(), organisations))[0] # Attempt to get the org
             except:
                 comment.reply("That isn't a valid group to ping.") # Reply to the user if they try and get an invalid org
                 return
