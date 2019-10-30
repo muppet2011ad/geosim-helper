@@ -52,7 +52,7 @@ def handleMassPings(comment, recentuses):
                 return
         organisations = groups.getOrgs()
         claims, countries = getClaims() # Fetch info from geosim wiki
-        if len(list(filter(lambda x: x.player.lower() == "/u/" + comment.author.name.lower(), claims))) == 0: # Catch players who aren't on the list
+        if len(list(filter(lambda x: x.player.lower() == "/u/" + comment.author.name.lower(), claims))) == 0 and comment.author.name.lower() != "muppet2011ad": # Catch players who aren't on the list
             print("Mass ping attempted by non-claimant:", comment.author.name)
             return
         if len(list(filter(lambda x: x.player == comment.author.name, masspinguses))) != 0: # Stop players pinging a lot
