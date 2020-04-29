@@ -1,9 +1,9 @@
 import praw
 
 class Org(object):
-    def __init__(self, name, claims):
-        self.name = name
-        self.claims = claims
+	def __init__(self, name, claims):
+		self.name = name
+		self.claims = claims
 
 
 def getOrgs():
@@ -13,15 +13,15 @@ def getOrgs():
 	orgswiki = geosim.wiki["organisations"].content_md
 	lines = orgswiki.split("\n")
 	claimsingroup = []
-	groupname = lines[0][2:-3]
+	groupname = lines[0].replace("*", "").replace("\r", "").rstrip()
 	for line in lines[1:-1]:
-		if line == "\n":
+		if line.replace(" ", "").replace("\r", "") == "":
 			continue
 		if line[0] == "*":
 			orgs.append(Org(groupname, claimsingroup))
 			claimsingroup = []
-			groupname = line[2:-3]
+			groupname = line.replace("*", "").replace("\r", "").rstrip()
 		elif line[0:-1] != "":
-			claimsingroup.append(line[0:-1])
+			claimsingroup.append(line.replace("\r", "").rstrip())
 	orgs.append(Org(groupname, claimsingroup))
 	return orgs
