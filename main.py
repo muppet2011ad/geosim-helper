@@ -19,9 +19,12 @@ def getClaims():
     countries = []
 
     for line in playermasterlist.split("\n"): # For every line of text in the player master list
-        if line[0] != "[" or "/u/" not in line.split("|")[1]: # If it's not a line about a claim
+        if "|" not in line or "/u/" not in line.split("|")[1]: # If it's not a line about a claim
             continue # Ignore it
-        country = re.search(r"\[(.*?)\]",line).group().replace("[","").replace("]","") # Regex to identify the country in square brackets
+        if "[" in line.split("|")[0]:
+            country = re.search(r"\[(.*?)\]", line).group().replace("[", "").replace("]", "")  # Regex to identify the country in square brackets
+        else:
+            country = line.split("|")[0].lstrip().rstrip()
         player = re.search(r"\/u\/[^|\* ]*",line.split("|")[1]).group() # Regex to extract the player from the line
         claimslist.append(Claim(country,player)) # Creates a new claim object
         countries.append(country)
@@ -134,5 +137,7 @@ for comment in geosim.stream.comments():
     for use in masspinguses:
         if datetime.datetime.now().timestamp() - use.time > 180:
             masspinguses.remove(use)
+    if comment.author.name == "geosim-helper":
+        continue
     handleMassPings(comment, masspinguses)
     handleModPings(comment, masspinguses)
