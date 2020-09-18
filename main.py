@@ -7,6 +7,13 @@ geosim = reddit.subreddit("geosim") # Gets us a subreddit instance for /r/geosim
 
 organisations = groups.getOrgs()
 
+# Common regexes
+
+idcountry = re.compile(r"\[(.*?)\]")
+idplayer = re.compile(r"u\/[^|\* ]*")
+pingcmd = re.compile(r"^Ping! [\w ,']*")
+modcmd = re.compile(r"^Mods!$")
+
 class PingUse(object):
     def __init__(self, player, time):
         self.player = player
@@ -22,10 +29,10 @@ def getClaims():
         if "|" not in line or "u/" not in line.split("|")[1]: # If it's not a line about a claim
             continue # Ignore it
         if "[" in line.split("|")[0]:
-            country = re.search(r"\[(.*?)\]", line).group().replace("[", "").replace("]", "")  # Regex to identify the country in square brackets
+            country = idcountry.search(line).group().replace("[", "").replace("]", "")  # Regex to identify the country in square brackets
         else:
             country = line.split("|")[0].lstrip().rstrip()
-        player = re.search(r"u\/[^|\* ]*",line.split("|")[1]).group() # Regex to extract the player from the line
+        player = idplayer.search(line.split("|")[1]).group() # Regex to extract the player from the line
         if player[0] != "/":
             player = "/" + player
         claimslist.append(Claim(country,player)) # Creates a new claim object
@@ -44,7 +51,7 @@ def getMods():
     return realmods
 
 def handleMassPings(comment, recentuses):
-    cmdregex = re.search(r"^Ping! [\w ,']*", comment.body) # Regex to check for a command
+    cmdregex = pingcmd.search(comment.body) # Regex to check for a command
     if cmdregex != None:
         playermasterlist = geosim.wiki["players"].content_md
         try:
@@ -123,7 +130,7 @@ def handleMassPings(comment, recentuses):
 masspinguses = []
 
 def handleModPings(comment, recentuses):
-    cmdregex = re.search(r"^Mods!$", comment.body)
+    cmdregex = modcmd.search(comment.body)
     if cmdregex != None:
         try:
             comment.refresh()
