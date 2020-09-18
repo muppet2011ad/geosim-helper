@@ -105,7 +105,7 @@ def handleMassPings(comment, recentuses):
         while counter < len(validpings): # Iterate through the claims we need to ping
             commentbody = "Pinging: \n"
             for ping in validpings[counter:counter+3]:
-                commentbody += "\n" + ping + "fgsdfgsdfg\n" # Do 3 pings at a time per reddit limitations
+                commentbody += "\n" + ping + "\n" # Do 3 pings at a time per reddit limitations
             counter += 3
             commentstomake.append(commentbody)
         lastcomment = comment
@@ -153,7 +153,7 @@ def handleModPings(comment, recentuses):
         while counter < len(pings): # Iterate through the claims we need to ping
             commentbody = "Pinging: \n"
             for ping in pings[counter:counter+3]:
-                commentbody += "\n" + ping + "dfgsdfg\n" # Do 3 pings at a time per reddit limitations
+                commentbody += "\n" + ping + "\n" # Do 3 pings at a time per reddit limitations
             counter += 3
             commentstomake.append(commentbody)
         lastcomment = comment
