@@ -118,7 +118,8 @@ def handleModPings(comment, recentuses):
             return
         pings = []
         for moderator in getMods():
-            pings.append("/u/" + moderator.name)
+            if moderator.name != "AutoModerator":
+                pings.append("/u/" + moderator.name)
         counter = 0
         commentstomake = []
         while counter < len(pings): # Iterate through the claims we need to ping
