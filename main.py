@@ -123,7 +123,10 @@ def handleMassPings(comment, recentuses):
                 invalidcomment += " was not pinged as I could not find them in the [PML](http://www.reddit.com/r/geosim/wiki/players) or as an [organisation](http://www.reddit.com/r/geosim/wiki/organisations)."
             else:
                 invalidcomment += " were not pinged as I could not find them in the [PML](http://www.reddit.com/r/geosim/wiki/players) or as an [organisation](http://www.reddit.com/r/geosim/wiki/organisations)."
-            lastcomment.reply(invalidcomment)
+            if len(invalidcomment) >= 10000:
+                lastcomment.reply("Oi stop trying to break the bot!")
+            else:
+                lastcomment.reply(invalidcomment)
         if len(validpings) > 6:
             masspinguses.append(PingUse(comment.author.name, datetime.datetime.now().timestamp()))
 
