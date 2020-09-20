@@ -73,7 +73,7 @@ def handleMassPings(comment, recentuses):
         pings = []
         invalids = []
         for group in groupstoping:
-            if groupstoping != "UNGA": # Everything other than UNGA
+            if group != "UNGA": # Everything other than UNGA
                 try:
                     orgclaims = list(filter(lambda x: x.name.lower() == group.lower(), organisations))[0].claims # Attempt to get the org
                     pings += orgclaims
