@@ -1,5 +1,5 @@
 import praw, re, datetime, groups, os
-from claim import Claim
+from claim import *
 
 reddit = praw.Reddit(
     client_id=os.getenv("client_id"),
@@ -25,29 +25,6 @@ class PingUse(object):
         self.player = player
         self.time = time
 
-def getClaims():
-    playermasterlist = geosim.wiki["players"].content_md # Fetches the content of the player master list
-
-    claimslist = [] # Creates a list to store all of our claims
-    countries = []
-
-    for line in playermasterlist.split("\n"): # For every line of text in the player master list
-        if "|" not in line or "u/" not in line.split("|")[1]: # If it's not a line about a claim
-            continue # Ignore it
-        if "[" in line.split("|")[0]:
-            country = idcountry.search(line).group().replace("[", "").replace("]", "")  # Regex to identify the country in square brackets
-        else:
-            country = line.split("|")[0].lstrip().rstrip()
-        player = idplayer.search(line.split("|")[1]).group() # Regex to extract the player from the line
-        if player[0] != "/":
-            player = "/" + player
-        claimslist.append(Claim(country,player)) # Creates a new claim object
-        countries.append(country)
-        claimslist = sorted(claimslist, key = lambda claim: claim.country)
-        countries = sorted(countries, key =  lambda country: country)
-    
-    return claimslist, countries
-
 def getMods():
     moderators = geosim.moderator()
     realmods = []
@@ -70,7 +47,7 @@ def handleMassPings(comment, recentuses):
             if com.author.name == "geosim-helper":
                 return
         organisations = groups.getOrgs()
-        claims, countries = getClaims() # Fetch info from geosim wiki
+        claims, countries = getClaims(geosim) # Fetch info from geosim wiki
         if len(list(filter(lambda x: x.player.lower() == "/u/" + comment.author.name.lower(), claims))) == 0 and comment.author.name.lower() != "muppet2011ad": # Catch players who aren't on the list
             print("Mass ping attempted by non-claimant:", comment.author.name)
             return
