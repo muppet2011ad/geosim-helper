@@ -152,7 +152,7 @@ for comment in geosim.stream.comments():
     for use in masspinguses:
         if datetime.datetime.now().timestamp() - use.time > 180:
             masspinguses.remove(use)
-    if comment.author.name == "geosim-helper":
+    if not comment.author or comment.author.name == "geosim-helper":
         continue
     handleMassPings(comment, masspinguses)
     handleModPings(comment, masspinguses)
