@@ -72,6 +72,8 @@ def handle_post(post, country_to_posts):
         country_to_posts.add_post("Modevent", post)
     elif "[battle]" in post.title.lower():
         country_to_posts.add_post("Battle", post)
+    elif "[un]" in post.title.lower():
+        country_to_posts.add_post("UN", post)
     elif "[claim]" in post.title.lower() or post.link_flair_text == "Claim" or "[date]" in post.title.lower():
         pass
     else:
@@ -123,12 +125,12 @@ finally:
         reason = "Create index" # Otherwise start from scratch
 
     # Creates a bullet point for every meta group
-    meta_groups = {group:posts for (group, posts) in country_to_posts.map.items() if group in ["Meta", "Modpost", "Modevent", "Battle"] and group not in content}
+    meta_groups = {group:posts for (group, posts) in country_to_posts.map.items() if group in ["Meta", "Modpost", "Modevent", "Battle", "UN"] and group not in content}
     for group in meta_groups.keys():
         lines_meta.append("* [{group}] ({link})".format(group=group, link="https://reddit.com/r/geosim/wiki/vault/" + group.lower().replace(" ", "")))
 
     # Creates a bullet point for every country
-    country_groups = {group:posts for (group, posts) in country_to_posts.map.items() if group not in ["Meta", "Modpost", "Modevent", "Battle", "deferred"] and group not in content}
+    country_groups = {group:posts for (group, posts) in country_to_posts.map.items() if group not in ["Meta", "Modpost", "Modevent", "Battle", "deferred", "UN"] and group not in content}
     for group in country_groups.keys():
         lines_country.append("* [{group}] ({link})".format(group=group, link="https://reddit.com/r/geosim/wiki/vault/" + group.lower().replace(" ", "")))
 
