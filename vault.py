@@ -81,7 +81,7 @@ def handle_post(post, country_to_posts):
     else:
         country = "deferred"
         for claim in claims:
-            if claim.player.lower() == "/u/" + post.author.name.lower():
+            if post.author and claim.player.lower() == "/u/" + post.author.name.lower():
                 country = claim.country
                 break
         country_to_posts.add_post(country, post)
